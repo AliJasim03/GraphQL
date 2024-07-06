@@ -1,3 +1,7 @@
+
+const baseUrl = "https://learn.reboot01.com";
+
+
 document.getElementById('login-form').addEventListener('submit', async function (event) {
     event.preventDefault();
 
@@ -6,7 +10,7 @@ document.getElementById('login-form').addEventListener('submit', async function 
     const credentials = btoa(`${username}:${password}`);
 
     try {
-        const response = await fetch('https://((DOMAIN))/api/auth/signin', {
+        const response = await fetch('${baseUrl}/api/auth/signin', {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${credentials}`,
