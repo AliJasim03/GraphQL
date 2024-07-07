@@ -1,194 +1,74 @@
-
 const baseUrl = "https://learn.reboot01.com";
 
+function checkToken() {
+    debugger
+    const jwt = localStorage.getItem('hasura-jwt');
+    if (jwt) {
+        window.location.href = 'profile.html';
+    }
+}
+
+//check the token when the page is loaded
+checkToken();
 
 document.getElementById('login-form').addEventListener('submit', async function (event) {
     event.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const credentials = btoa(`${username}:${password}`);
-
+    const username = $('#username').val();
+    const password = $('#password').val();
     try {
-        const response = await fetch('${baseUrl}/api/auth/signin', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Basic ${credentials}`,
-                'Content-Type': 'application/json'
-            }
-        });
+        await login(username, password);
+    } catch (error) {
+        console.error(error);
+        alert(error);
+    }
 
-        if (!response.ok) {
-            throw new Error('Invalid credentials');
+});
+
+
+async function login(username, password) {
+    const base64Data = btoa(`${username}:${password}`);
+    fetch(`${baseUrl}/api/auth/signin`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Basic ${base64Data}`
         }
-
-        const data = await response.json();
-        localStorage.setItem('jwt', data.jwt);
-
-        window.location.href = 'profile.html';
-    } catch (error) {
-        document.getElementById('error-message').textContent = error.message;
-    }
-});
-
-async function fetchUserData() {
-    const jwt = localStorage.getItem('jwt');
-
-    if (!jwt) {
-        window.location.href = 'login.html';
-        return;
-    }
-
-    try {
-        const response = await fetch('${baseUrl}/api/graphql-engine/v1/graphql', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${jwt}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                query: `
-                {
-                  user {
-                    id
-                    login
-                  }
-                  transaction {
-                    id
-                    type
-                    amount
-                    userId
-                    createdAt
-                  }
-                  progress {
-                    id
-                    grade
-                    createdAt
-                  }
-                }`
-            })
+    })
+        .then(response => {
+            if (response.status === 200) {
+                return response.text();
+            } else {
+                return response.json().then(error => {
+                    throw new Error(error.error || `could not login: ${response.status} ${response.statusText}`);
+                });
+            }
+        })
+        .then(jwt => {
+            debugger;
+            if (!jwt || jwt.trim() === '') {
+                throw new Error(`invalid jwt received: ${jwt}`);
+            }
+            localStorage.setItem('hasura-jwt', jwt.replaceAll('"', ''));
+            window.location.href = 'profile.html';
         });
 
-        const result = await response.json();
-        displayUserData(result.data);
-    } catch (error) {
-        console.error('Error fetching user data:', error);
-    }
 }
 
-function displayUserData(data) {
-    const userInfoDiv = document.getElementById('user-info');
 
-    const user = data.user[0];
-    userInfoDiv.innerHTML = `
-        <p>ID: ${user.id}</p>
-        <p>Login: ${user.login}</p>
-    `;
-
-    // Display graphs
-    displayGraphs(data);
+function parseJwt() {
+    const token = localStorage.getItem('hasura-jwt') || '';
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const json = JSON.parse(jsonPayload);
+    return {
+        userId: json['https://hasura.io/jwt/claims']['x-hasura-user-id'],
+    };
 }
 
-function displayGraphs(data) {
-    const graphsDiv = document.getElementById('graphs');
-
-    // Example: XP earned over time
-    const xpData = data.transaction.filter(tx => tx.type === 'xp');
-    const xpGraph = generateXpGraph(xpData);
-    graphsDiv.appendChild(xpGraph);
-
-    // Example: Grade distribution
-    const gradeData = data.progress;
-    const gradeGraph = generateGradeGraph(gradeData);
-    graphsDiv.appendChild(gradeGraph);
+function logout() {
+    localStorage.removeItem('hasura-jwt');
+    window.location.href = '/graphql/index.html';
 }
 
-function generateXpGraph(data) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '500');
-    svg.setAttribute('height', '300');
-
-    // Generate graph here...
-
-    return svg;
-}
-
-function generateGradeGraph(data) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '500');
-    svg.setAttribute('height', '300');
-
-    // Generate graph here...
-
-    return svg;
-}
-
-document.getElementById('logout').addEventListener('click', function () {
-    localStorage.removeItem('jwt');
-    window.location.href = 'login.html';
-});
-
-document.addEventListener('DOMContentLoaded', fetchUserData);
-
-
-function generateXpGraph(data) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '500');
-    svg.setAttribute('height', '300');
-
-    const barWidth = 40;
-    const maxHeight = 200;
-
-    const maxXP = Math.max(...data.map(d => d.amount));
-    const scale = maxHeight / maxXP;
-
-    data.forEach((d, i) => {
-        const barHeight = d.amount * scale;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', i * (barWidth + 10));
-        rect.setAttribute('y', maxHeight - barHeight);
-        rect.setAttribute('width', barWidth);
-        rect.setAttribute('height', barHeight);
-        rect.setAttribute('fill', 'blue');
-        svg.appendChild(rect);
-    });
-
-    return svg;
-}
-
-function generateGradeGraph(data) {
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '500');
-    svg.setAttribute('height', '300');
-
-    const gradeCounts = data.reduce((acc, d) => {
-        acc[d.grade] = (acc[d.grade] || 0) + 1;
-        return acc;
-    }, {});
-
-    const barWidth = 40;
-    const maxHeight = 200;
-
-    const maxCount = Math.max(...Object.values(gradeCounts));
-    const scale = maxHeight / maxCount;
-
-    Object.entries(gradeCounts).forEach(([grade, count], i) => {
-        const barHeight = count * scale;
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect.setAttribute('x', i * (barWidth + 10));
-        rect.setAttribute('y', maxHeight - barHeight);
-        rect.setAttribute('width', barWidth);
-        rect.setAttribute('height', barHeight);
-        rect.setAttribute('fill', 'green');
-        svg.appendChild(rect);
-
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.setAttribute('x', i * (barWidth + 10) + barWidth / 2);
-        text.setAttribute('y', maxHeight - barHeight - 10);
-        text.setAttribute('text-anchor', 'middle');
-        text.textContent = grade;
-        svg.appendChild(text);
-    });
-
-    return svg;
-}
