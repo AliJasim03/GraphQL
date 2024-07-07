@@ -38,6 +38,10 @@ async function login(username, password) {
                 return response.text();
             } else {
                 return response.json().then(error => {
+                    $('#error').text(error.error || `could not login: ${response.status} ${response.statusText}`);
+                    $('#error').show();
+                    $('#error').fadeOut(5000);
+                    $('#error').removeClass('d-none');
                     throw new Error(error.error || `could not login: ${response.status} ${response.statusText}`);
                 });
             }
