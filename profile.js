@@ -1,56 +1,47 @@
-
-$('#logout').click(function() {
+$('#logout').click(function () {
     localStorage.removeItem('hasura-jwt');
     window.location.href = 'index.html';
 });
 
+const baseUrl = "https://learn.reboot01.com";
 
-async function fetchUserData() {
+
+async function fetchData(query) {
     const jwt = localStorage.getItem('hasura-jwt');
-    debugger
     if (!jwt) {
         window.location.href = 'index.html';
         return;
     }
 
+    const id = parseInt(parseJwt().userId, 10); // Parse userId as an integer
+
     try {
-        const response = await fetch('${baseUrl}/api/graphql-engine/v1/graphql', {
+        const response = await fetch(`${baseUrl}/api/graphql-engine/v1/graphql`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${jwt}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                query: `
-                {
-                  user {
-                    id
-                    login
-                  }
-                  transaction {
-                    id
-                    type
-                    amount
-                    userId
-                    createdAt
-                  }
-                  progress {
-                    id
-                    grade
-                    createdAt
-                  }
-                }`
+                query: query,
+                variables : id
             })
         });
 
         const result = await response.json();
-        displayUserData(result.data);
+        return result.data;
     } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('Error fetching data:', error);
     }
+
 }
 
+
+
+
 function displayUserData(data) {
+
+
     const userInfoDiv = document.getElementById('user-info');
 
     const user = data.user[0];
@@ -159,4 +150,50 @@ function generateGradeGraph(data) {
     return svg;
 }
 
-document.addEventListener('DOMContentLoaded', fetchUserData);
+async function getUserId() {
+    const query = userId;
+    return new Promise((resolve, reject) => {
+        fetch(`${baseUrl}/api/graphql-engine/v1/graphql`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("hasura-jwt")}`,
+            },
+            body: JSON.stringify({ query }),
+        })
+            .then((response) => {
+                if (response.status !== 200) {
+                    reject(`could not get user id: ${response.status} ${response.statusText}`);
+                    return;
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.errors) {
+                    reject(`could not get user id: ${data.errors[0].message}`);
+                    return;
+                }
+                if (data.data.user.length === 0) {
+                    reject(`user not found`);
+                    return;
+                }
+                resolve(data.data.user[0].id);
+            });
+    });
+}
+
+
+
+function parseJwt() {
+    const token = localStorage.getItem('hasura-jwt') || '';
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const json = JSON.parse(jsonPayload);
+    return {
+        userId: json['https://hasura.io/jwt/claims']['x-hasura-user-id'],
+    };
+}
+
+document.addEventListener('DOMContentLoaded', fetchData(userDataQuery));

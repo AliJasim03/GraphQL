@@ -1,7 +1,6 @@
 const baseUrl = "https://learn.reboot01.com";
 
 function checkToken() {
-    debugger
     const jwt = localStorage.getItem('hasura-jwt');
     if (jwt) {
         window.location.href = 'profile.html';
@@ -11,10 +10,18 @@ function checkToken() {
 //check the token when the page is loaded
 checkToken();
 
-document.getElementById('login-form').addEventListener('submit', async function (event) {
+$('#login-form').submit(async function(event) {
     event.preventDefault();
-    const username = $('#username').val();
-    const password = $('#password').val();
+    // const username = $('#username').val();
+    // const password = $('#password').val();
+
+
+    $('#login-btn').prop('disabled', true);
+
+    setTimeout(() => {
+        $('#login-btn').prop('disabled', false);
+    });
+
     try {
         await login(username, password);
     } catch (error) {
@@ -47,7 +54,6 @@ async function login(username, password) {
             }
         })
         .then(jwt => {
-            debugger;
             if (!jwt || jwt.trim() === '') {
                 throw new Error(`invalid jwt received: ${jwt}`);
             }
@@ -55,20 +61,6 @@ async function login(username, password) {
             window.location.href = 'profile.html';
         });
 
-}
-
-
-function parseJwt() {
-    const token = localStorage.getItem('hasura-jwt') || '';
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    const json = JSON.parse(jsonPayload);
-    return {
-        userId: json['https://hasura.io/jwt/claims']['x-hasura-user-id'],
-    };
 }
 
 function logout() {
