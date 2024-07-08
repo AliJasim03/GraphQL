@@ -10,10 +10,11 @@ function checkToken() {
 //check the token when the page is loaded
 checkToken();
 
-$('#login-form').submit(async function(event) {
+$('#login-form').submit(async function (event) {
+    debugger;
     event.preventDefault();
-    // const username = $('#username').val();
-    // const password = $('#password').val();
+    const username = $('#username').val();
+    const password = $('#password').val();
 
 
     $('#login-btn').prop('disabled', true);
