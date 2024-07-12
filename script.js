@@ -1,5 +1,4 @@
 const baseUrl = "https://learn.reboot01.com";
-
 function checkToken() {
     const jwt = localStorage.getItem('hasura-jwt');
     if (jwt) {
@@ -11,10 +10,19 @@ function checkToken() {
 checkToken();
 
 $('#login-form').submit(async function (event) {
-    debugger;
     event.preventDefault();
-    const username = $('#username').val();
-    const password = $('#password').val();
+    let username = $('#username').val();
+    let password = $('#password').val();
+
+
+    if (!username || !password) {
+
+        $('#error').text('Username and password are required');
+        $('#error').show();
+        $('#error').fadeOut(5000);
+        $('#error').removeClass('d-none');
+        return;
+    }
 
 
     $('#login-btn').prop('disabled', true);
