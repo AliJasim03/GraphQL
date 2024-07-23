@@ -7,9 +7,9 @@
         <title>Profile</title>
         <link rel="stylesheet" href="styles.css">
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-    integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+            integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     </head>
 
     <body>
@@ -17,14 +17,28 @@
             <h1 id="username">Welcome</h1>
             <div id="user-info"></div>
             <h2>Statistics</h2>
-            <canvas id="myChart" width="400" height="400"></canvas>
+            <div class="container" style="max-width: 40%;">
+                <canvas id="xpPieChart"></canvas>
+            </div>
+            <div class="container" style="max-width: 40%;">
+                <canvas id="progressBarChart"></canvas>
+            </div>
+            <div class="container" style="max-width: 40%;">
+                <div id="resualtPieChart"></div>
+            </div>
+            <div class="container" style="max-width: 40%;">
+                <canvas id="skillPolarChart"></canvas>
+            </div>
+            <div class="container" style="max-width: 40%;">
+                <canvas id="ratioBarChart"></canvas>
+            </div>
+
             <div id="graphs"></div>
             <button id="logout">Logout</button>
         </div>
         <script src="query.js" defer></script>
         <script type="module" src="profile.js" defer></script>
         <script type="module" src="graphs.js" defer></script>
-        <script src="test.js" defer></script>
 
     </body>
 

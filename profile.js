@@ -1,5 +1,15 @@
 const baseUrl = "https://learn.reboot01.com";
 
+function checkToken() {
+    const jwt = localStorage.getItem('hasura-jwt');
+    if (!jwt) {
+        window.location.href = 'index.html';
+    }
+}
+
+//check the token when the page is loaded
+checkToken();
+
 export async function getUser() {
     const query = user;
     try {
@@ -27,7 +37,7 @@ export async function getUser() {
             console.log("No user found");
             return;
         }
-        return data.data.user[0];
+        return data.data;
 
     } catch (error) {
         console.error('Fetch error:', error);
@@ -69,14 +79,57 @@ export async function fetchData(query) {
             }
             return;
         }
-        console.log(data);
-        console.log(data.data);
+
 
         return data.data;
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
+
+export async function fetchObjects(objectIds) {
+    const jwt = localStorage.getItem('hasura-jwt');
+    if (!jwt) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const variables = { objectIds };
+    try {
+        const response = await fetch(`${baseUrl}/api/graphql-engine/v1/graphql`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${jwt}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: objectQuery,
+                variables
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const data = await response.json();
+
+        if (data.errors) {
+            console.error(data.errors);
+            if (data.errors[0].message === "Could not verify JWT: JWTExpired") {
+                localStorage.removeItem('hasura-jwt');
+                window.location.href = 'index.html';
+            }
+            return;
+
+        }
+
+
+        return data.data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
 
 function parseJwt() {
     const token = localStorage.getItem('hasura-jwt') || '';

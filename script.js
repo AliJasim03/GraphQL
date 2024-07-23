@@ -14,7 +14,6 @@ $('#login-form').submit(async function (event) {
     let username = $('#username').val();
     let password = $('#password').val();
 
-
     if (!username || !password) {
 
         $('#error').text('Username and password are required');
@@ -23,7 +22,6 @@ $('#login-form').submit(async function (event) {
         $('#error').removeClass('d-none');
         return;
     }
-
 
     $('#login-btn').prop('disabled', true);
 
@@ -71,9 +69,3 @@ async function login(username, password) {
         });
 
 }
-
-function logout() {
-    localStorage.removeItem('hasura-jwt');
-    window.location.href = '/graphql/index.html';
-}
-

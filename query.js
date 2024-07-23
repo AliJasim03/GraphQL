@@ -3,20 +3,28 @@ const userTransactionQuery = `
                   transaction(where: { _and: [{ userId: { _eq: $userId } }, { type: { _eq: "xp" } }] }) {                    id
                     type
                     amount
+                    objectId
                     userId
                     createdAt
+                    path
                   }
                 }`;
 
 const userProgressQuery = `
                 query GetUserProgress($userId: Int!) {
-                  progress(where: { userId: { _eq: $userId } }) {
+                  progress(where: { userId: { _eq: $userId }, object: { type: { _eq: "project" } } }) {
                     id
                     userId
                     objectId
                     grade
                     createdAt
                     updatedAt
+                    object {
+                      id
+                      name
+                      type
+                      attrs
+                    }
                   }
                 }`;
 
@@ -34,15 +42,30 @@ const userResultQuery = `
                 }`;
 
 const objectQuery = `
-                query GetObjectData($objectId: Int!) {
-                  object(where: { id: { _eq: $objectId } }) {
-                    id
-                    name
-                    type
-                    attrs
-                  }
-                }`;
+              query GetObjectsData($objectIds: [Int!]!) {
+                object(where: { id: { _in: $objectIds } }) {
+                  id
+                  name
+                  type
+                  attrs
+                }
+              }`;
 
+
+const userDetailsQuery = `
+       query GetUser($userId: Int!) {
+            user {
+                id
+                login
+                totalUp
+                totalDown
+             		auditRatio
+            }
+            event_user(where: { userId: { _eq: $userId }, eventId:{_eq:20}}){
+                level
+          			userAuditRatio
+            }
+        }`;
 
 const user = `
         query {
@@ -53,3 +76,17 @@ const user = `
         }
     `;
 
+const userSkillsQuery = `
+        query test($userId: Int) {
+          user(where: {id: {_eq: $userId}}) {
+            transactions(
+              order_by: [{type: desc}, {amount: desc}]
+              distinct_on: [type]
+              where: {userId: {_eq: $userId}, type: {_in: ["skill_js", "skill_go", "skill_html", "skill_prog", "skill_front-end", "skill_back-end"]}}
+            ) {
+              type
+              amount
+            }
+          }
+        }
+  `;
