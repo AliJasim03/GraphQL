@@ -1,6 +1,14 @@
 const userTransactionQuery = `
-                query GetTransactionData($userId: Int!) {
-                  transaction(where: { _and: [{ userId: { _eq: $userId } }, { type: { _eq: "xp" } }] }) {                    id
+                query GetTransactionData($userId: Int!, $eventId: Int!) {
+                  transaction(where: { 
+                    _and: [
+                      { userId: { _eq: $userId } }, 
+                      { type: { _eq: "xp" } }, 
+                      { eventId: { _eq: $eventId } },
+                      { objectId: { _neq: 100569 } }
+                    ]
+                  }) {                    
+                    id
                     type
                     amount
                     objectId
@@ -9,6 +17,7 @@ const userTransactionQuery = `
                     path
                   }
                 }`;
+//100569 is pisice js
 
 const userProgressQuery = `
                 query GetUserProgress($userId: Int!) {
@@ -53,7 +62,7 @@ const objectQuery = `
 
 
 const userDetailsQuery = `
-       query GetUser($userId: Int!) {
+       query GetUser($userId: Int!, $eventId: Int!) {
             user {
                 id
                 login
@@ -61,7 +70,7 @@ const userDetailsQuery = `
                 totalDown
              		auditRatio
             }
-            event_user(where: { userId: { _eq: $userId }, eventId:{_eq:20}}){
+            event_user(where: { userId: { _eq: $userId }, eventId:{_eq:$eventId}}){
                 level
           			userAuditRatio
             }
@@ -90,3 +99,15 @@ const userSkillsQuery = `
           }
         }
   `;
+
+const userEventsQuery = `
+ query GetUser($userId: Int!) {
+            event_user(where: {
+                    _and: [
+                      { userId: { _eq: $userId } },
+                      { level: { _neq: 0 } }
+                    ]
+                  }){
+                    						eventId
+            }
+        }`;

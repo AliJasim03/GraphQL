@@ -1,11 +1,13 @@
-import { getUser, fetchData, fetchObjects } from './profile.js';
+import { getEventId, fetchData, fetchData_Event, fetchObjects } from './profile.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+$(document).ready(async function () {
 
-    const user = await fetchData(userDetailsQuery);
+    await getEventId();
+
+    const user = await fetchData_Event(userDetailsQuery);
     displayUserData(user);
 
-    const transactions = await fetchData(userTransactionQuery);
+    const transactions = await fetchData_Event(userTransactionQuery);
     //sort teh top 10 transaction by amout
     transactions.transaction.sort((a, b) => b.amount - a.amount);
     transactions.transaction = transactions.transaction.slice(0, 10);
