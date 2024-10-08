@@ -5,41 +5,100 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Profile</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+        <!-- Optional Custom Styles -->
         <link rel="stylesheet" href="styles.css">
+        <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-            integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <!-- Google Charts -->
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <style>
+            .chart-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: space-around;
+            }
+
+            .chart-card {
+                flex: 1 1 calc(50% - 40px);
+                /* Flex basis to occupy 50% minus the gaps */
+                min-width: 300px;
+                /* Minimum width for smaller screens */
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .chart-card h5 {
+                margin-bottom: 20px;
+            }
+        </style>
     </head>
 
     <body>
-        <div class="profile-container">
-            <h1 id="username">Welcome</h1>
-            <div id="user-info"></div>
-            <h2>Statistics</h2>
-            <div class="container" style="max-width: 40%;">
-                <canvas id="xpPieChart"></canvas>
-            </div>
-            <div class="container" style="max-width: 40%;">
-                <canvas id="progressBarChart"></canvas>
-            </div>
-            <div class="container" style="max-width: 40%;">
-                <div id="resualtPieChart"></div>
-            </div>
-            <div class="container" style="max-width: 40%;">
-                <canvas id="skillPolarChart"></canvas>
-            </div>
-            <div class="container" style="max-width: 40%;">
-                <canvas id="ratioBarChart"></canvas>
-            </div>
+        <!-- Profile Container -->
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <!-- Profile Information Section -->
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm text-center"
+                        style="border: none; background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+                        <div class="card-body">
+                            <!-- Header with background and title text -->
+                            <div class="mb-4 p-3 rounded" style="background-color: #007bff; color: #fff;">
+                                <h4 id="username" class="card-title">Welcome, User</h4>
+                            </div>
+                            <!-- Profile Information -->
+                            <div id="user-info" class="text-muted mb-4" style="font-size: 1.1rem;">User Information and
+                                details go here
+                            </div>
+                            <!-- Buttons Container -->
+                            <div class="d-flex justify-content-center gap-3">
+                                <button class="btn btn-danger btn-sm" id="logout">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="graphs"></div>
-            <button id="logout">Logout</button>
+                <!-- Statistics Section with Flex Layout -->
+                <div class="col-12">
+                    <h2 class="text-center mb-4">Statistics</h2>
+                    <div class="chart-container">
+                        <!-- XP Pie Chart -->
+                        <div class="chart-card">
+                            <h5>XP Pie Chart</h5>
+                            <div id="xpPieChart" style="height: 300px;"></div>
+                        </div>
+                        <!-- Progress Bar Chart -->
+                        <div class="chart-card">
+                            <h5>Progress Bar Chart</h5>
+                            <div id="progressBarChart" style="height: 300px;"></div>
+                        </div>
+                        <!-- Skill Polar Chart -->
+                        <div class="chart-card">
+                            <h5>Skill Polar Chart</h5>
+                            <div id="skillPolarChart" style="height: 300px;"></div>
+                        </div>
+                        <!-- Ratio Bar Chart -->
+                        <div class="chart-card">
+                            <h5>Ratio Bar Chart</h5>
+                            <div id="ratioBarChart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Optional JS Files -->
         <script src="query.js" defer></script>
         <script type="module" src="profile.js" defer></script>
         <script type="module" src="graphs.js" defer></script>
-
     </body>
 
 </html>

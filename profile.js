@@ -10,7 +10,6 @@ function checkToken() {
 
 export async function getEventId() {
     let events = await fetchData(userEventsQuery);
-    debugger;
     eventId = parseInt(events.event_user[1].eventId, 10);
 }
 
@@ -70,7 +69,7 @@ export async function fetchData_Event(query) {
     }
 
     const userId = parseInt(parseJwt().userId, 10);
-    debugger
+
     const variables = { userId, eventId };
     try {
         const response = await fetch(`${baseUrl}/api/graphql-engine/v1/graphql`, {
