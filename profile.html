@@ -33,10 +33,30 @@
                 padding: 20px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 text-align: center;
+                overflow: auto;
             }
 
             .chart-card h5 {
                 margin-bottom: 20px;
+            }
+
+            /* Additional styling for profile card */
+            .profile-card {
+                background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+                border: none;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-card .card-title {
+                background-color: #007bff;
+                color: #fff;
+                padding: 15px;
+                border-radius: 10px 10px 0 0;
+            }
+
+            .profile-card .card-body {
+                padding: 30px 20px;
             }
         </style>
     </head>
@@ -44,30 +64,22 @@
     <body>
         <!-- Profile Container -->
         <div class="container mt-5">
-            <div class="row justify-content-center">
-                <!-- Profile Information Section -->
-                <div class="col-12 mb-4">
-                    <div class="card shadow-sm text-center"
-                        style="border: none; background: linear-gradient(135deg, #f8f9fa, #e9ecef);">
+            <div class="row">
+                <!-- Profile Information Section (Left Column) -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card profile-card shadow-sm text-center" style="margin-top: 4em !important;">
+                        <div class="card-title">
+                            <h4 id="username">Welcome</h4>
+                        </div>
                         <div class="card-body">
-                            <!-- Header with background and title text -->
-                            <div class="mb-4 p-3 rounded" style="background-color: #007bff; color: #fff;">
-                                <h4 id="username" class="card-title">Welcome, User</h4>
-                            </div>
-                            <!-- Profile Information -->
-                            <div id="user-info" class="text-muted mb-4" style="font-size: 1.1rem;">User Information and
-                                details go here
-                            </div>
-                            <!-- Buttons Container -->
-                            <div class="d-flex justify-content-center gap-3">
-                                <button class="btn btn-danger btn-sm" id="logout">Logout</button>
-                            </div>
+                            <div id="user-info" class="text-muted mb-3" style="font-size: 1.1rem;">User Info</div>
+                            <button class="btn btn-danger btn-sm fs-4" id="logout">Logout</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Statistics Section with Flex Layout -->
-                <div class="col-12">
+                <!-- Statistics Section (Right Column) -->
+                <div class="col-lg-8 col-md-6">
                     <h2 class="text-center mb-4">Statistics</h2>
                     <div class="chart-container">
                         <!-- XP Pie Chart -->
